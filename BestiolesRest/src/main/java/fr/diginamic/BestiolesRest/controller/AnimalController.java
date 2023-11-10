@@ -1,81 +1,74 @@
 package fr.diginamic.BestiolesRest.controller;
 
-import java.util.List;
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import fr.diginamic.BestiolesRest.enums.Sex;
+import jakarta.validation.Valid;
+
 import fr.diginamic.BestiolesRest.model.Animal;
-import fr.diginamic.BestiolesRest.repository.AnimalRepository;
-import fr.diginamic.BestiolesRest.repository.SpeciesRepository;
+import fr.diginamic.BestiolesRest.service.*;
 
 @Controller
 @RequestMapping("/animal")
 public class AnimalController {
+    // ------------------------- Autowired -------------------------
 
     @Autowired
-    private AnimalRepository animalRepository;
+    private PersonService personService;
 
     @Autowired
-    private SpeciesRepository speciesRepository;
+    private AnimalService animalService;
 
-    @GetMapping("/")
-    public String listAnimal(Model model) {
-        List<Animal> animal = (List<Animal>) animalRepository.findAll();
-        model.addAttribute("animalList", animal);
+    @Autowired
+    private SpeciesService speciesService;
 
-        return "animal/list_animal";
+    // ------------------------- CRUD -------------------------
+    @GetMapping("/all")
+    public String getAll(Model model) {
+        model.addAttribute("animals", animalService.findAll());
+        return "animal/all";
     }
 
-    @GetMapping("/{id}")
-    public String initUpdate(@PathVariable("id") Integer id, Model model) {
-        Optional<Animal> animal = animalRepository.findById(id);
-        if (animal.isPresent()) {
-            model.addAttribute(animal.get());
-            model.addAttribute("sex", Sex.values());
-            model.addAttribute("species", speciesRepository.findAll());
-            return "animal/update_animal";
-        }
-        return "animal/error";
-    }
-
-    @GetMapping("/create")
-    public String initCreate(Model model) {
+    @GetMapping("/add")
+    public String add(Model model) {
         model.addAttribute("animal", new Animal());
-        model.addAttribute("sex", Sex.values());
-        model.addAttribute("species", speciesRepository.findAll());
-        return "animal/create_animal";
+        return "animal/add";
     }
 
-    @PostMapping
-    public String createOrUpdate(Animal animalItem) {
-        System.out.println(animalItem);
-        animalRepository.save(animalItem);
-        return "redirect:/animal";
+    @PostMapping("/add")
+    public String add(@Valid Animal animal, BindingResult result) {
+        if (result.hasErrors()) {
+            return "animal/add";
+        }
+        animalService.save(animal);
+        return "redirect:/animal/all";
+    }
+
+    @GetMapping("/update/{id}")
+    public String update(@PathVariable("id") Integer id, Model model) {
+        model.addAttribute("animal", animalService.findById(id));
+        return "animal/update";
+    }
+
+    @PostMapping("/update/{id}")
+    public String update(@PathVariable("id") Integer id, @Valid Animal animal, BindingResult result) {
+        if (result.hasErrors()) {
+            return "animal/update";
+        }
+        animalService.save(animal);
+        return "redirect:/animal/all";
     }
 
     @GetMapping("/delete/{id}")
-    public String delete(@PathVariable("id") Integer animalId) {
-        Optional<Animal> animalToDelete = animalRepository.findById(animalId);
-        animalToDelete.ifPresent(animal -> animalRepository.delete(animal));
-        return "redirect:/animal";
+    public String delete(@PathVariable("id") Integer id) {
+        animalService.deleteById(id);
+        return "redirect:/animal/all";
     }
 
-    // Catch other routes
-    @GetMapping("")
-    public String list() {
-        return "redirect:/animal/";
-    }
-
-    @GetMapping("/**")
-    public String error() {
-        return "animal/error";
-    }
 }
