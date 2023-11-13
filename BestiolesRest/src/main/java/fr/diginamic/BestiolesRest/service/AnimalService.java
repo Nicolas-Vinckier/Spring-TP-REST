@@ -44,8 +44,12 @@ public class AnimalService {
 
     // ------------------------- Delete -------------------------
 
-    public void deleteById(Integer id) {
-        animalRepository.deleteById(id);
+    public Animal deleteById(Integer id) {
+        Animal animalToDelete = animalRepository.findById(id).orElse(null);
+        if (animalToDelete != null) {
+            animalRepository.deleteById(id);
+        }
+        return animalToDelete;
     }
 
 }
