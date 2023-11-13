@@ -36,6 +36,10 @@ public class SpeciesService {
 
     // ------------------------- Update -------------------------
 
+    public Species updateById(@Valid Species species) {
+        return speciesRepository.save(species);
+    }
+
     // ------------------------- Delete -------------------------
 
     public Species deleteById(Integer id) {
