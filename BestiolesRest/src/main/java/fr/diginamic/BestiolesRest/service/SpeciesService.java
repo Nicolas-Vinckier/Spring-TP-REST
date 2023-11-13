@@ -38,8 +38,12 @@ public class SpeciesService {
 
     // ------------------------- Delete -------------------------
 
-    public void deleteById(Integer id) {
-        speciesRepository.deleteById(id);
+    public Species deleteById(Integer id) {
+        Species speciesToDelete = speciesRepository.findById(id).orElse(null);
+        if (speciesToDelete != null) {
+            speciesRepository.deleteById(id);
+        }
+        return speciesToDelete;
     }
 
 }
