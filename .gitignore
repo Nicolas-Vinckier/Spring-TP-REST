@@ -1,0 +1,17 @@
+# Dossiers générés par Spring Boot
+target/
+build/
+ 
+# Fichiers de configuration générés par Spring Boot
+application.properties
+application.yml
+ 
+# Fichiers de log générés par Spring Boot
+logging/
+ 
+# Fichiers de sauvegarde générés par Spring Boot
+*.log
+*.tmp
+
+# Fichiers de configuration IDE
+.vscode/
