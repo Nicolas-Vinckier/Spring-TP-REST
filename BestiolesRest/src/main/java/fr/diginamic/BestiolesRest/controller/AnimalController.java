@@ -3,7 +3,6 @@ package fr.diginamic.BestiolesRest.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,10 +38,9 @@ public class AnimalController {
         return animalService.findAll();
     }
 
-    @GetMapping("/update/{id}")
-    public List<Animal> update(@PathVariable("id") Integer id, Model model) {
-        model.addAttribute("animal", animalService.findById(id));
-        return animalService.findAll();
+    @GetMapping("/{id}")
+    public Animal findById(@PathVariable("id") Integer id) {
+        return animalService.findById(id);
     }
 
     @PostMapping("/update/{id}")
