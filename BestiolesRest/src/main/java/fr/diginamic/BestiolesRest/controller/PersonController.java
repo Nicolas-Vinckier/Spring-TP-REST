@@ -40,12 +40,9 @@ public class PersonController {
     }
 
     @PutMapping("/update/{id}")
-    public Object update(@PathVariable("id") Integer id, @Valid Person person, BindingResult result) {
-        if (result.hasErrors()) {
-            return personService.findAll();
-        }
-        personService.save(person);
-        return personService.findAll();
+    public Person update(@PathVariable("id") Integer id, @RequestBody @Valid Person person) {
+        person.setId(id);
+        return personService.save(person);
     }
 
     @DeleteMapping("/delete/{id}")

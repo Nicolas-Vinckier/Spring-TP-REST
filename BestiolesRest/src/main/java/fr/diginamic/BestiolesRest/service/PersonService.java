@@ -37,6 +37,10 @@ public class PersonService {
 
     // ------------------------- Update -------------------------
 
+    public Person updateById(@Valid Person person) {
+        return personRepository.save(person);
+    }
+
     // ------------------------- Delete -------------------------
 
     public Person deleteById(Integer id) {
