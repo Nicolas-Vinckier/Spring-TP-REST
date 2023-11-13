@@ -39,8 +39,12 @@ public class PersonService {
 
     // ------------------------- Delete -------------------------
 
-    public void deleteById(Integer id) {
-        personRepository.deleteById(id);
+    public Person deleteById(Integer id) {
+        Person personToDelete = personRepository.findById(id).orElse(null);
+        if (personToDelete != null) {
+            personRepository.deleteById(id);
+        }
+        return personToDelete;
     }
 
 }
