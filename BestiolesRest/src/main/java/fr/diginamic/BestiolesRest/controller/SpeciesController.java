@@ -1,72 +1,69 @@
 package fr.diginamic.BestiolesRest.controller;
 
-import java.util.List;
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import fr.diginamic.BestiolesRest.model.Species;
-import fr.diginamic.BestiolesRest.repository.SpeciesRepository;
+import fr.diginamic.BestiolesRest.service.SpeciesService;
+import jakarta.validation.Valid;
 
 @Controller
 @RequestMapping("/species")
 public class SpeciesController {
 
+    // ------------------------- Autowired -------------------------
+
     @Autowired
-    private SpeciesRepository speciesRepository;
+    private SpeciesService speciesService;
 
-    @GetMapping("/")
-    public String listSpecies(Model model) {
-        List<Species> species = speciesRepository.findAll();
-        model.addAttribute("speciesList", species);
+    // ------------------------- CRUD -------------------------
 
-        return "species/list_species";
+    @GetMapping("/all")
+    public String getAll(Model model) {
+        model.addAttribute("speciess", speciesService.findAll());
+        return "species/all";
     }
 
-    @GetMapping("/{id}")
-    public String initUpdate(@PathVariable("id") Integer id, Model model) {
-        Optional<Species> species = speciesRepository.findById(id);
-        if (species.isPresent()) {
-            model.addAttribute(species.get());
-            return "species/update_species";
+    @GetMapping("/add")
+    public String add(Model model) {
+        model.addAttribute("species", new Species());
+        return "species/add";
+    }
+
+    @PostMapping("/add")
+    public String add(@Valid Species species, BindingResult result) {
+        if (result.hasErrors()) {
+            return "species/add";
         }
-        return "species/error";
+        speciesService.save(species);
+        return "redirect:/species/all";
     }
 
-    @GetMapping("/create")
-    public String initCreate(Model model) {
-        model.addAttribute(new Species());
-        return "species/create_species";
+    @GetMapping("/update/{id}")
+    public String update(@PathVariable("id") Integer id, Model model) {
+        model.addAttribute("species", speciesService.findById(id));
+        return "species/update";
     }
 
-    @PostMapping
-    public String createOrUpdate(Species speciesItem) {
-        System.out.println(speciesItem);
-        speciesRepository.save(speciesItem);
-        return "redirect:/species";
+    @PostMapping("/update/{id}")
+    public String update(@PathVariable("id") Integer id, @Valid Species person, BindingResult result) {
+        if (result.hasErrors()) {
+            return "species/update";
+        }
+        speciesService.save(person);
+        return "redirect:/species/all";
     }
 
     @GetMapping("/delete/{id}")
-    public String delete(@PathVariable("id") Integer speciesId) {
-        Optional<Species> speciesToDelete = speciesRepository.findById(speciesId);
-        speciesToDelete.ifPresent(species -> speciesRepository.delete(species));
-        return "redirect:/species";
+    public String delete(@PathVariable("id") Integer id) {
+        speciesService.deleteById(id);
+        return "redirect:/species/all";
     }
 
-    // Catch other routes
-    @GetMapping("")
-    public String list() {
-        return "redirect:/species/";
-    }
-
-    @GetMapping("/**")
-    public String error() {
-        return "species/error";
-    }
 }

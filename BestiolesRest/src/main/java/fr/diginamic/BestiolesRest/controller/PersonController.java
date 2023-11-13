@@ -1,79 +1,67 @@
 package fr.diginamic.BestiolesRest.controller;
 
-import java.util.List;
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import fr.diginamic.BestiolesRest.service.PersonService;
+import jakarta.validation.Valid;
 import fr.diginamic.BestiolesRest.model.Person;
-import fr.diginamic.BestiolesRest.repository.AnimalRepository;
-import fr.diginamic.BestiolesRest.repository.PersonRepository;
-
-import org.springframework.ui.Model;
 
 @Controller
 @RequestMapping("/person")
 public class PersonController {
+    // ------------------------- Autowired -------------------------
 
     @Autowired
-    private PersonRepository personRepository;
+    private PersonService personService;
 
-    @Autowired
-    private AnimalRepository animalRepository;
-
-    @GetMapping("/")
-    public String listPerson(Model model) {
-        List<Person> person = (List<Person>) personRepository.findAll();
-        model.addAttribute("personList", person);
-
-        return "person/list_person";
+    // ------------------------- CRUD -------------------------
+    @GetMapping("/all")
+    public String getAll(Model model) {
+        model.addAttribute("persons", personService.findAll());
+        return "person/all";
     }
 
-    @GetMapping("/{id}")
-    public String initUpdate(@PathVariable("id") Integer id, Model model) {
-        Optional<Person> person = personRepository.findById(id);
-        if (person.isPresent()) {
-            model.addAttribute(person.get());
-            model.addAttribute(animalRepository.findAll());
-            return "person/update_person";
+    @GetMapping("/add")
+    public String add(Model model) {
+        model.addAttribute("person", new Person());
+        return "person/add";
+    }
+
+    @PostMapping("/add")
+    public String add(@Valid Person person, BindingResult result) {
+        if (result.hasErrors()) {
+            return "person/add";
         }
-        return "person/error";
+        personService.save(person);
+        return "redirect:/animal/all";
     }
 
-    @GetMapping("/create")
-    public String initCreate(Model model) {
-        model.addAttribute(new Person());
-        model.addAttribute(animalRepository.findAll());
-        return "person/create_person";
+    @GetMapping("/update/{id}")
+    public String update(@PathVariable("id") Integer id, Model model) {
+        model.addAttribute("person", personService.findById(id));
+        return "person/update";
     }
 
-    @PostMapping
-    public String createOrUpdate(Person personItem) {
-        System.out.println(personItem);
-        personRepository.save(personItem);
-        return "redirect:/person";
+    @PostMapping("/update/{id}")
+    public String update(@PathVariable("id") Integer id, @Valid Person person, BindingResult result) {
+        if (result.hasErrors()) {
+            return "person/update";
+        }
+        personService.save(person);
+        return "redirect:/person/all";
     }
 
     @GetMapping("/delete/{id}")
-    public String delete(@PathVariable("id") Integer personId) {
-        Optional<Person> personToDelete = personRepository.findById(personId);
-        personToDelete.ifPresent(person -> personRepository.delete(person));
-        return "redirect:/person";
+    public String delete(@PathVariable("id") Integer id) {
+        personService.deleteById(id);
+        return "redirect:/person/all";
     }
 
-    // Catch other routes
-    @GetMapping("")
-    public String list() {
-        return "redirect:/person/";
-    }
-
-    @GetMapping("/**")
-    public String error() {
-        return "person/error";
-    }
 }

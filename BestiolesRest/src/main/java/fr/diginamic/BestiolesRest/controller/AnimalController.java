@@ -20,13 +20,7 @@ public class AnimalController {
     // ------------------------- Autowired -------------------------
 
     @Autowired
-    private PersonService personService;
-
-    @Autowired
     private AnimalService animalService;
-
-    @Autowired
-    private SpeciesService speciesService;
 
     // ------------------------- CRUD -------------------------
     @GetMapping("/all")
