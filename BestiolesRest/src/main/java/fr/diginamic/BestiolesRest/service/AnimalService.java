@@ -42,6 +42,12 @@ public class AnimalService {
         return animauxList;
     }
 
+    // ------------------------- Update -------------------------
+
+    public Animal updateById(@Valid Animal animal) {
+        return animalRepository.save(animal);
+    }
+
     // ------------------------- Delete -------------------------
 
     public Animal deleteById(Integer id) {
