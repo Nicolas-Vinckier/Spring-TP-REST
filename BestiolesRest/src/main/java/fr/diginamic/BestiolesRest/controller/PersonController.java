@@ -5,6 +5,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,12 +29,8 @@ public class PersonController {
     }
 
     @PostMapping("/add")
-    public Object add(@Valid Person person, BindingResult result) {
-        if (result.hasErrors()) {
-            return personService.findAll();
-        }
-        personService.save(person);
-        return personService.findAll();
+    public Person add(@RequestBody @Valid Person person) {
+        return personService.save(person);
     }
 
     @GetMapping("/{id}")
@@ -40,7 +38,7 @@ public class PersonController {
         return personService.findById(id);
     }
 
-    @PostMapping("/update/{id}")
+    @PutMapping("/update/{id}")
     public Object update(@PathVariable("id") Integer id, @Valid Person person, BindingResult result) {
         if (result.hasErrors()) {
             return personService.findAll();

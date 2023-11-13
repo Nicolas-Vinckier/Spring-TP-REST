@@ -17,8 +17,8 @@ public class PersonService {
 
     // ------------------------- Create -------------------------
 
-    public void save(@Valid Person person) {
-        personRepository.save(person);
+    public Person save(@Valid Person person) {
+        return personRepository.save(person);
     }
 
     // ------------------------- Read -------------------------
