@@ -1,34 +1,52 @@
 package fr.diginamic.BestiolesRest.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
+import jakarta.validation.Valid;
 
 import fr.diginamic.BestiolesRest.model.Animal;
-import jakarta.validation.Valid;
+import fr.diginamic.BestiolesRest.repository.AnimalRepository;
 
 @Service
 public class AnimalService {
 
+    private final AnimalRepository animalRepository;
+
+    public AnimalService(AnimalRepository animalRepository) {
+        this.animalRepository = animalRepository;
+    }
+
     // ------------------------- Create -------------------------
 
     public void save(@Valid Animal animal) {
+        animalRepository.save(animal);
 
     }
 
     // ------------------------- Read -------------------------
 
-    public Object findById(Integer id) {
-        return null;
+    public Animal findById(Integer id) {
+        Animal animal = animalRepository.findById(id).orElse(null);
+
+        return animal;
     }
 
-    public Object findAll() {
-        return null;
-    }
+    public List<Animal> findAll() {
+        // Find all animals in the database
+        Iterable<Animal> animauxIterable = animalRepository.findAll();
+        List<Animal> animauxList = new ArrayList<>();
+        animauxIterable.forEach(animauxList::add);
 
-    // ------------------------- Update -------------------------
+        // Return the list of animals
+        return animauxList;
+    }
 
     // ------------------------- Delete -------------------------
 
     public void deleteById(Integer id) {
+        animalRepository.deleteById(id);
     }
 
 }
