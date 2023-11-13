@@ -16,8 +16,8 @@ public class SpeciesService {
 
     // ------------------------- Create -------------------------
 
-    public void save(@Valid Species species) {
-        speciesRepository.save(species);
+    public Species save(@Valid Species species) {
+        return speciesRepository.save(species);
     }
 
     // ------------------------- Read -------------------------

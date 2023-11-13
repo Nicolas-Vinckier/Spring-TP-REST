@@ -5,6 +5,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,12 +31,8 @@ public class SpeciesController {
     }
 
     @PostMapping("/add")
-    public Object add(@Valid Species species, BindingResult result) {
-        if (result.hasErrors()) {
-            return speciesService.findAll();
-        }
-        speciesService.save(species);
-        return speciesService.findAll();
+    public Species add(@RequestBody @Valid Species species) {
+        return speciesService.save(species);
     }
 
     @GetMapping("/{id}")
@@ -42,7 +40,7 @@ public class SpeciesController {
         return speciesService.findById(id);
     }
 
-    @PostMapping("/update/{id}")
+    @PutMapping("/update/{id}")
     public Object update(@PathVariable("id") Integer id, @Valid Species species, BindingResult result) {
         if (result.hasErrors()) {
             return speciesService.findAll();
