@@ -7,6 +7,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -30,12 +32,8 @@ public class AnimalController {
     }
 
     @PostMapping("/add")
-    public List<Animal> add(@Valid Animal animal, BindingResult result) {
-        if (result.hasErrors()) {
-            return animalService.findAll();
-        }
-        animalService.save(animal);
-        return animalService.findAll();
+    public Animal add(@RequestBody Animal animal) {
+        return animalService.save(animal);
     }
 
     @GetMapping("/{id}")
@@ -43,7 +41,7 @@ public class AnimalController {
         return animalService.findById(id);
     }
 
-    @PostMapping("/update/{id}")
+    @PutMapping("/update/{id}")
     public List<Animal> update(@PathVariable("id") Integer id, @Valid Animal animal, BindingResult result) {
         if (result.hasErrors()) {
             return animalService.findAll();

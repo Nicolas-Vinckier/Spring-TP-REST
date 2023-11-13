@@ -20,9 +20,8 @@ public class AnimalService {
 
     // ------------------------- Create -------------------------
 
-    public void save(@Valid Animal animal) {
-        animalRepository.save(animal);
-
+    public Animal save(@Valid Animal animal) {
+        return animalRepository.save(animal);
     }
 
     // ------------------------- Read -------------------------
