@@ -1,19 +1,19 @@
 package fr.diginamic.BestiolesRest.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import fr.diginamic.BestiolesRest.model.Species;
 import fr.diginamic.BestiolesRest.service.SpeciesService;
 import jakarta.validation.Valid;
 
-@Controller
+@RestController
 @RequestMapping("/species")
 public class SpeciesController {
 
@@ -25,45 +25,38 @@ public class SpeciesController {
     // ------------------------- CRUD -------------------------
 
     @GetMapping("/all")
-    public String getAll(Model model) {
-        model.addAttribute("speciess", speciesService.findAll());
-        return "species/all";
-    }
-
-    @GetMapping("/add")
-    public String add(Model model) {
-        model.addAttribute("species", new Species());
-        return "species/add";
+    public Object getAll() {
+        return speciesService.findAll();
     }
 
     @PostMapping("/add")
-    public String add(@Valid Species species, BindingResult result) {
+    public Object add(@Valid Species species, BindingResult result) {
         if (result.hasErrors()) {
-            return "species/add";
+            return speciesService.findAll();
         }
         speciesService.save(species);
-        return "redirect:/species/all";
+        return speciesService.findAll();
     }
 
     @GetMapping("/update/{id}")
-    public String update(@PathVariable("id") Integer id, Model model) {
+    public Object update(@PathVariable("id") Integer id, Model model) {
         model.addAttribute("species", speciesService.findById(id));
-        return "species/update";
+        return speciesService.findAll();
     }
 
     @PostMapping("/update/{id}")
-    public String update(@PathVariable("id") Integer id, @Valid Species person, BindingResult result) {
+    public Object update(@PathVariable("id") Integer id, @Valid Species species, BindingResult result) {
         if (result.hasErrors()) {
-            return "species/update";
+            return speciesService.findAll();
         }
-        speciesService.save(person);
-        return "redirect:/species/all";
+        speciesService.save(species);
+        return speciesService.findAll();
     }
 
     @GetMapping("/delete/{id}")
-    public String delete(@PathVariable("id") Integer id) {
+    public Object delete(@PathVariable("id") Integer id) {
         speciesService.deleteById(id);
-        return "redirect:/species/all";
+        return speciesService.findAll();
     }
 
 }

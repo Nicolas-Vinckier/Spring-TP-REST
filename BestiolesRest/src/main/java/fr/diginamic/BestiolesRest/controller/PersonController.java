@@ -1,19 +1,19 @@
 package fr.diginamic.BestiolesRest.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import fr.diginamic.BestiolesRest.service.PersonService;
 import jakarta.validation.Valid;
 import fr.diginamic.BestiolesRest.model.Person;
 
-@Controller
+@RestController
 @RequestMapping("/person")
 public class PersonController {
     // ------------------------- Autowired -------------------------
@@ -23,45 +23,38 @@ public class PersonController {
 
     // ------------------------- CRUD -------------------------
     @GetMapping("/all")
-    public String getAll(Model model) {
-        model.addAttribute("persons", personService.findAll());
-        return "person/all";
-    }
-
-    @GetMapping("/add")
-    public String add(Model model) {
-        model.addAttribute("person", new Person());
-        return "person/add";
+    public Object getAll() {
+        return personService.findAll();
     }
 
     @PostMapping("/add")
-    public String add(@Valid Person person, BindingResult result) {
+    public Object add(@Valid Person person, BindingResult result) {
         if (result.hasErrors()) {
-            return "person/add";
+            return personService.findAll();
         }
         personService.save(person);
-        return "redirect:/animal/all";
+        return personService.findAll();
     }
 
     @GetMapping("/update/{id}")
-    public String update(@PathVariable("id") Integer id, Model model) {
+    public Object update(@PathVariable("id") Integer id, Model model) {
         model.addAttribute("person", personService.findById(id));
-        return "person/update";
+        return personService.findAll();
     }
 
     @PostMapping("/update/{id}")
-    public String update(@PathVariable("id") Integer id, @Valid Person person, BindingResult result) {
+    public Object update(@PathVariable("id") Integer id, @Valid Person person, BindingResult result) {
         if (result.hasErrors()) {
-            return "person/update";
+            return personService.findAll();
         }
         personService.save(person);
-        return "redirect:/person/all";
+        return personService.findAll();
     }
 
     @GetMapping("/delete/{id}")
-    public String delete(@PathVariable("id") Integer id) {
+    public Object delete(@PathVariable("id") Integer id) {
         personService.deleteById(id);
-        return "redirect:/person/all";
+        return personService.findAll();
     }
 
 }

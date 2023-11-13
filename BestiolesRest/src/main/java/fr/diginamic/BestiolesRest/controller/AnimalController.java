@@ -1,20 +1,22 @@
 package fr.diginamic.BestiolesRest.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 
 import fr.diginamic.BestiolesRest.model.Animal;
 import fr.diginamic.BestiolesRest.service.*;
 
-@Controller
+@RestController
 @RequestMapping("/animal")
 public class AnimalController {
     // ------------------------- Autowired -------------------------
@@ -24,45 +26,38 @@ public class AnimalController {
 
     // ------------------------- CRUD -------------------------
     @GetMapping("/all")
-    public String getAll(Model model) {
-        model.addAttribute("animals", animalService.findAll());
-        return "animal/all";
-    }
-
-    @GetMapping("/add")
-    public String add(Model model) {
-        model.addAttribute("animal", new Animal());
-        return "animal/add";
+    public List<Animal> getAll() {
+        return animalService.findAll();
     }
 
     @PostMapping("/add")
-    public String add(@Valid Animal animal, BindingResult result) {
+    public List<Animal> add(@Valid Animal animal, BindingResult result) {
         if (result.hasErrors()) {
-            return "animal/add";
+            return animalService.findAll();
         }
         animalService.save(animal);
-        return "redirect:/animal/all";
+        return animalService.findAll();
     }
 
     @GetMapping("/update/{id}")
-    public String update(@PathVariable("id") Integer id, Model model) {
+    public List<Animal> update(@PathVariable("id") Integer id, Model model) {
         model.addAttribute("animal", animalService.findById(id));
-        return "animal/update";
+        return animalService.findAll();
     }
 
     @PostMapping("/update/{id}")
-    public String update(@PathVariable("id") Integer id, @Valid Animal animal, BindingResult result) {
+    public List<Animal> update(@PathVariable("id") Integer id, @Valid Animal animal, BindingResult result) {
         if (result.hasErrors()) {
-            return "animal/update";
+            return animalService.findAll();
         }
         animalService.save(animal);
-        return "redirect:/animal/all";
+        return animalService.findAll();
     }
 
     @GetMapping("/delete/{id}")
-    public String delete(@PathVariable("id") Integer id) {
+    public List<Animal> delete(@PathVariable("id") Integer id) {
         animalService.deleteById(id);
-        return "redirect:/animal/all";
+        return animalService.findAll();
     }
 
 }
